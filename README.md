@@ -31,11 +31,13 @@ services:
   lynxprompt-mcp:
     image: drumsergio/lynxprompt-mcp:latest
     ports:
-      - "8080:8080"
+      - "127.0.0.1:8080:8080"
     environment:
       - LYNXPROMPT_URL=https://lynxprompt.com
       - LYNXPROMPT_TOKEN=lp_xxx
 ```
+
+> **Security note:** The HTTP transport listens on `127.0.0.1:8080` by default. If you need to expose it on a network, place it behind a reverse proxy with authentication.
 
 ## Install via npm (stdio transport)
 
@@ -50,7 +52,7 @@ npm install -g lynxprompt-mcp
 lynxprompt-mcp
 ```
 
-This downloads the pre-built Go binary for your platform and runs it with stdio transport, compatible with any MCP client.
+This downloads the pre-built Go binary from GitHub Releases for your platform and runs it with stdio transport. Requires at least one [published release](https://github.com/GeiserX/lynxprompt-mcp/releases).
 
 ## Local build
 
@@ -70,6 +72,7 @@ go run ./cmd/server
 |-------------------|--------------------------|--------------------------------------------------|
 | `LYNXPROMPT_URL`  | `https://lynxprompt.com` | LynxPrompt instance URL (without trailing /)     |
 | `LYNXPROMPT_TOKEN`| _(required)_             | API token in `lp_xxx` format                     |
+| `LISTEN_ADDR`     | `127.0.0.1:8080`         | HTTP listen address (Docker sets `0.0.0.0:8080`) |
 | `TRANSPORT`       | _(empty = HTTP)_         | Set to `stdio` for stdio transport               |
 
 Put them in a `.env` file (from `.env.example`) or set them in the environment.
