@@ -18,7 +18,7 @@ func RegisterBlueprints(s *server.MCPServer, lp *client.Client) {
 	)
 
 	s.AddResource(res, func(ctx context.Context, req mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
-		body, err := lp.ListBlueprints()
+		body, err := lp.ListBlueprints(ctx)
 		if err != nil {
 			return nil, err
 		}

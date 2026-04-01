@@ -18,7 +18,7 @@ func RegisterHierarchies(s *server.MCPServer, lp *client.Client) {
 	)
 
 	s.AddResource(res, func(ctx context.Context, req mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
-		body, err := lp.ListHierarchies()
+		body, err := lp.ListHierarchies(ctx)
 		if err != nil {
 			return nil, err
 		}

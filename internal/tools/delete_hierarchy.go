@@ -26,7 +26,7 @@ func NewDeleteHierarchy(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 
-		resp, err := lp.DeleteHierarchy(id)
+		resp, err := lp.DeleteHierarchy(ctx, id)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

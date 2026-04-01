@@ -61,7 +61,7 @@ func NewCreateBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			body["visibility"] = vis
 		}
 
-		resp, err := lp.CreateBlueprint(body)
+		resp, err := lp.CreateBlueprint(ctx, body)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

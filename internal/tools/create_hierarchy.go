@@ -46,7 +46,7 @@ func NewCreateHierarchy(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			body["description"] = desc
 		}
 
-		resp, err := lp.CreateHierarchy(body)
+		resp, err := lp.CreateHierarchy(ctx, body)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

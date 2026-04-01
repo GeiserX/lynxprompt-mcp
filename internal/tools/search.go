@@ -39,7 +39,7 @@ func NewSearchBlueprints(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		bpType, _ := req.GetArguments()["type"].(string)
 		tags, _ := req.GetArguments()["tags"].(string)
 
-		resp, err := lp.SearchBlueprints(query, category, bpType, tags)
+		resp, err := lp.SearchBlueprints(ctx, query, category, bpType, tags)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

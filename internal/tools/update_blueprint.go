@@ -57,7 +57,7 @@ func NewUpdateBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultError("nothing to update: provide at least one of name, content, description, or visibility"), nil
 		}
 
-		resp, err := lp.UpdateBlueprint(id, body)
+		resp, err := lp.UpdateBlueprint(ctx, id, body)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

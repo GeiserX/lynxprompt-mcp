@@ -26,7 +26,7 @@ func NewDeleteBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 			return mcp.NewToolResultError(err.Error()), nil
 		}
 
-		resp, err := lp.DeleteBlueprint(id)
+		resp, err := lp.DeleteBlueprint(ctx, id)
 		if err != nil {
 			return mcp.NewToolResultError(err.Error()), nil
 		}

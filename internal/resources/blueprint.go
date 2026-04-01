@@ -25,7 +25,7 @@ func RegisterBlueprint(s *server.MCPServer, lp *client.Client) {
 			return nil, fmt.Errorf("missing blueprint id")
 		}
 
-		body, err := lp.GetBlueprint(id)
+		body, err := lp.GetBlueprint(ctx, id)
 		if err != nil {
 			return nil, err
 		}

@@ -25,7 +25,7 @@ func RegisterHierarchy(s *server.MCPServer, lp *client.Client) {
 			return nil, fmt.Errorf("missing hierarchy id")
 		}
 
-		body, err := lp.GetHierarchy(id)
+		body, err := lp.GetHierarchy(ctx, id)
 		if err != nil {
 			return nil, err
 		}
