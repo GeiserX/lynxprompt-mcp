@@ -66,7 +66,7 @@ func (c *Client) ListBlueprints(ctx context.Context) ([]byte, error) {
 
 // GetBlueprint returns a single blueprint by ID (includes content).
 func (c *Client) GetBlueprint(ctx context.Context, id string) ([]byte, error) {
-	u := c.buildURL("/api/v1/blueprints/"+id, nil)
+	u := c.buildURL("/api/v1/blueprints/"+url.PathEscape(id), nil)
 	req, err := http.NewRequestWithContext(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, err
@@ -86,7 +86,7 @@ func (c *Client) ListHierarchies(ctx context.Context) ([]byte, error) {
 
 // GetHierarchy returns a single hierarchy by ID (includes tree).
 func (c *Client) GetHierarchy(ctx context.Context, id string) ([]byte, error) {
-	u := c.buildURL("/api/v1/hierarchies/"+id, nil)
+	u := c.buildURL("/api/v1/hierarchies/"+url.PathEscape(id), nil)
 	req, err := http.NewRequestWithContext(ctx, "GET", u, nil)
 	if err != nil {
 		return nil, err
@@ -131,7 +131,10 @@ func (c *Client) SearchBlueprints(ctx context.Context, query, category, bpType, 
 
 // CreateBlueprint creates a new blueprint.
 func (c *Client) CreateBlueprint(ctx context.Context, body map[string]any) ([]byte, error) {
-	b, _ := json.Marshal(body)
+	b, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("CreateBlueprint: marshal body: %w", err)
+	}
 	u := c.buildURL("/api/v1/blueprints", nil)
 	req, err := http.NewRequestWithContext(ctx, "POST", u, bytes.NewReader(b))
 	if err != nil {
@@ -143,8 +146,11 @@ func (c *Client) CreateBlueprint(ctx context.Context, body map[string]any) ([]by
 
 // UpdateBlueprint updates an existing blueprint by ID.
 func (c *Client) UpdateBlueprint(ctx context.Context, id string, body map[string]any) ([]byte, error) {
-	b, _ := json.Marshal(body)
-	u := c.buildURL("/api/v1/blueprints/"+id, nil)
+	b, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("UpdateBlueprint: marshal body: %w", err)
+	}
+	u := c.buildURL("/api/v1/blueprints/"+url.PathEscape(id), nil)
 	req, err := http.NewRequestWithContext(ctx, "PUT", u, bytes.NewReader(b))
 	if err != nil {
 		return nil, err
@@ -155,7 +161,7 @@ func (c *Client) UpdateBlueprint(ctx context.Context, id string, body map[string
 
 // DeleteBlueprint deletes a blueprint by ID.
 func (c *Client) DeleteBlueprint(ctx context.Context, id string) ([]byte, error) {
-	u := c.buildURL("/api/v1/blueprints/"+id, nil)
+	u := c.buildURL("/api/v1/blueprints/"+url.PathEscape(id), nil)
 	req, err := http.NewRequestWithContext(ctx, "DELETE", u, nil)
 	if err != nil {
 		return nil, err
@@ -165,7 +171,10 @@ func (c *Client) DeleteBlueprint(ctx context.Context, id string) ([]byte, error)
 
 // CreateHierarchy creates a new hierarchy.
 func (c *Client) CreateHierarchy(ctx context.Context, body map[string]any) ([]byte, error) {
-	b, _ := json.Marshal(body)
+	b, err := json.Marshal(body)
+	if err != nil {
+		return nil, fmt.Errorf("CreateHierarchy: marshal body: %w", err)
+	}
 	u := c.buildURL("/api/v1/hierarchies", nil)
 	req, err := http.NewRequestWithContext(ctx, "POST", u, bytes.NewReader(b))
 	if err != nil {
@@ -177,7 +186,7 @@ func (c *Client) CreateHierarchy(ctx context.Context, body map[string]any) ([]by
 
 // DeleteHierarchy deletes a hierarchy by ID.
 func (c *Client) DeleteHierarchy(ctx context.Context, id string) ([]byte, error) {
-	u := c.buildURL("/api/v1/hierarchies/"+id, nil)
+	u := c.buildURL("/api/v1/hierarchies/"+url.PathEscape(id), nil)
 	req, err := http.NewRequestWithContext(ctx, "DELETE", u, nil)
 	if err != nil {
 		return nil, err
