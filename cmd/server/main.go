@@ -24,7 +24,7 @@ func main() {
 	// Create MCP server
 	s := server.NewMCPServer(
 		"LynxPrompt MCP Bridge",
-		"0.0.1",
+		version.Version,
 		server.WithToolCapabilities(true),
 		server.WithRecovery(),
 	)
@@ -80,17 +80,17 @@ func main() {
 	// TRANSPORT
 	// -----------------------------------------------------------------
 	transport := strings.ToLower(os.Getenv("TRANSPORT"))
-	if transport == "http" {
-		httpSrv := server.NewStreamableHTTPServer(s)
-		log.Println("LynxPrompt MCP bridge listening on :8080")
-		if err := httpSrv.Start(":8080"); err != nil {
-			log.Fatalf("server error: %v", err)
-		}
-	} else {
+	if transport == "stdio" {
 		stdioSrv := server.NewStdioServer(s)
 		log.Println("LynxPrompt MCP bridge running on stdio")
 		if err := stdioSrv.Listen(context.Background(), os.Stdin, os.Stdout); err != nil {
 			log.Fatalf("stdio server error: %v", err)
+		}
+	} else {
+		httpSrv := server.NewStreamableHTTPServer(s)
+		log.Println("LynxPrompt MCP bridge listening on :8080")
+		if err := httpSrv.Start(":8080"); err != nil {
+			log.Fatalf("server error: %v", err)
 		}
 	}
 }
