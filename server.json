@@ -1,0 +1,59 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.GeiserX/lynxprompt-mcp",
+  "description": "MCP server for LynxPrompt — browse, search, and manage AI configuration blueprints",
+  "repository": {
+    "url": "https://github.com/GeiserX/lynxprompt-mcp",
+    "source": "github"
+  },
+  "version": "0.0.1",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "lynxprompt-mcp",
+      "version": "0.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "LYNXPROMPT_URL",
+          "description": "LynxPrompt instance URL (e.g. https://lynxprompt.com)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "LYNXPROMPT_TOKEN",
+          "description": "LynxPrompt API token (lp_xxx format)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    },
+    {
+      "registryType": "oci",
+      "identifier": "drumsergio/lynxprompt-mcp:v0.0.1",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "LYNXPROMPT_URL",
+          "description": "LynxPrompt instance URL (e.g. https://lynxprompt.com)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": false
+        },
+        {
+          "name": "LYNXPROMPT_TOKEN",
+          "description": "LynxPrompt API token (lp_xxx format)",
+          "isRequired": true,
+          "format": "string",
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}

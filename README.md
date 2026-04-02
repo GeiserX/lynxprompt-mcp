@@ -7,6 +7,9 @@
   <a href="https://github.com/GeiserX/lynxprompt-mcp/stargazers"><img src="https://img.shields.io/github/stars/GeiserX/lynxprompt-mcp?style=flat-square&logo=github" alt="GitHub Stars"/></a>
   <a href="https://github.com/GeiserX/lynxprompt-mcp/blob/main/LICENSE"><img src="https://img.shields.io/github/license/GeiserX/lynxprompt-mcp?style=flat-square" alt="License"/></a>
 </p>
+<p align="center">
+  <a href="https://glama.ai/mcp/servers/GeiserX/lynxprompt-mcp"><img src="https://glama.ai/mcp/servers/GeiserX/lynxprompt-mcp/badges/score.svg" alt="Glama MCP Server" /></a>
+</p>
 
 <p align="center"><strong>A tiny bridge that exposes any LynxPrompt instance as an MCP server, enabling LLMs to browse, search, and manage AI configuration blueprints.</strong></p>
 
