@@ -1,7 +1,7 @@
 {
   "name": "lynxprompt-mcp",
   "mcpName": "io.github.GeiserX/lynxprompt-mcp",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "description": "MCP server for LynxPrompt — manage AI prompts, AGENTS.md and CLAUDE.md files via the Model Context Protocol",
   "license": "GPL-3.0",
   "repository": {
