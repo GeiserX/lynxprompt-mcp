@@ -140,3 +140,13 @@ LynxPrompt-MCP follows the [Contributor Covenant](http://contributor-covenant.or
 - [genieacs-mcp](https://github.com/GeiserX/genieacs-mcp) — TR-069 device management
 - [pumperly-mcp](https://github.com/GeiserX/pumperly-mcp) — Fuel and EV charging prices
 - [telegram-archive-mcp](https://github.com/GeiserX/telegram-archive-mcp) — Telegram message archive
+
+## Related Projects
+
+| Project | Description |
+|---------|-------------|
+| [LynxPrompt](https://github.com/GeiserX/LynxPrompt) | Self-hosted platform for AI IDE/Tools Rules and Commands via WebUI and CLI |
+| [lynxprompt-vscode](https://github.com/GeiserX/lynxprompt-vscode) | VS Code extension for LynxPrompt AI configuration file management |
+| [lynxprompt-action](https://github.com/GeiserX/lynxprompt-action) | GitHub Action to sync and validate AI IDE configuration files with LynxPrompt |
+| [n8n-nodes-lynxprompt](https://github.com/GeiserX/n8n-nodes-lynxprompt) | n8n community node for LynxPrompt AI configuration blueprints |
+| [homebrew-lynxprompt](https://github.com/GeiserX/homebrew-lynxprompt) | Homebrew tap for LynxPrompt CLI |
