@@ -10,24 +10,32 @@
 
 Put them in a `.env` file (from `.env.example`) or set them in the environment.
 
-## Example configuration for client LLMs
+## MCP client configuration
+
+The npm package always runs over stdio. Add this to your client's `mcpServers` (Claude Desktop, Claude Code, Cursor); add `LYNXPROMPT_URL` to `env` for a self-hosted instance:
 
 ```json
 {
-  "schema_version": "v1",
-  "name_for_human": "LynxPrompt-MCP",
-  "name_for_model": "lynxprompt_mcp",
-  "description_for_human": "Browse, search, and manage AI configuration blueprints from LynxPrompt.",
-  "description_for_model": "Interact with a LynxPrompt instance that stores AI configuration blueprints. First call initialize, then reuse the returned session id in header \"Mcp-Session-Id\" for every other call. Use readResource to fetch URIs that begin with lynxprompt://. Use listTools to discover available actions and callTool to execute them.",
-  "auth": { "type": "bearer", "token": "your-secret-token" },
-  "api": {
-    "type": "jsonrpc-mcp",
-    "url":  "http://localhost:8080/mcp",
-    "init_method": "initialize",
-    "session_header": "Mcp-Session-Id"
-  },
-  "logo_url": "https://lynxprompt.com/logo.png",
-  "contact_email": "acsdesk@protonmail.com",
-  "legal_info_url": "https://github.com/GeiserX/lynxprompt-mcp/blob/main/LICENSE"
+  "mcpServers": {
+    "lynxprompt": {
+      "command": "npx",
+      "args": ["-y", "lynxprompt-mcp"],
+      "env": { "LYNXPROMPT_TOKEN": "lp_..." }
+    }
+  }
+}
+```
+
+For the HTTP server (Docker or `go run`), point a client that accepts remote servers at `/mcp`, with the bearer token when `MCP_AUTH_TOKEN` is set:
+
+```json
+{
+  "mcpServers": {
+    "lynxprompt": {
+      "type": "http",
+      "url": "http://127.0.0.1:8080/mcp",
+      "headers": { "Authorization": "Bearer <your MCP_AUTH_TOKEN>" }
+    }
+  }
 }
 ```

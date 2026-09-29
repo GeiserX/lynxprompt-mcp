@@ -1,11 +1,11 @@
-# Installation
+# Getting started
 
 ## Docker Compose
 
 ```yaml
 services:
   lynxprompt-mcp:
-    image: drumsergio/lynxprompt-mcp:latest
+    image: drumsergio/lynxprompt-mcp:v0.1.0
     ports:
       - "127.0.0.1:8080:8080"
     environment:
