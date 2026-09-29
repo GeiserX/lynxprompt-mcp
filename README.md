@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="LynxPrompt MCP banner" width="900"/>
+  <img src="https://raw.githubusercontent.com/GeiserX/lynxprompt-mcp/main/docs/images/banner.svg" alt="LynxPrompt MCP banner" width="900"/>
 </p>
 
 <h1 align="center">LynxPrompt-MCP</h1>
