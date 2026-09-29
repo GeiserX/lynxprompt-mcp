@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/GeiserX/lynxprompt-mcp/main/docs/images/banner.svg" alt="LynxPrompt MCP banner" width="900"/>
+  <img src="https://raw.githubusercontent.com/GeiserX/lynxprompt-mcp/main/docs/images/banner.svg" alt="lynxprompt-mcp" width="900"/>
 </p>
 
-<h1 align="center">LynxPrompt-MCP</h1>
+<h1 align="center">lynxprompt-mcp</h1>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/lynxprompt-mcp"><img src="https://img.shields.io/npm/v/lynxprompt-mcp?style=flat-square&logo=npm" alt="npm"/></a>
@@ -26,22 +26,34 @@ It works with [lynxprompt.com](https://lynxprompt.com) or your own self-hosted L
 
 ## Quick start
 
-```sh
-npx lynxprompt-mcp
+Register the npm package in your MCP client (Claude Desktop, Claude Code, Cursor); `npx` runs it over stdio:
+
+```json
+{
+  "mcpServers": {
+    "lynxprompt": {
+      "command": "npx",
+      "args": ["-y", "lynxprompt-mcp"],
+      "env": { "LYNXPROMPT_TOKEN": "lp_..." }
+    }
+  }
+}
 ```
 
-Set `LYNXPROMPT_TOKEN` (and `LYNXPROMPT_URL` for a self-hosted instance) first. Docker Compose and local builds are in [Installation](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/installation.md).
+For a self-hosted instance add `LYNXPROMPT_URL` to `env`. Docker Compose, the HTTP server and local builds are in [Getting started](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/getting-started.md).
 
 ## Documentation
 
-- [Installation](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/installation.md): Docker Compose, npm, local build
-- [Configuration](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/configuration.md): environment variables and an example client config
-- [Resources and tools](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/usage.md)
+- [Getting started](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/getting-started.md): Docker Compose, npm, local build
+- [Configuration](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/configuration.md): environment variables and MCP client configuration
+- [Usage](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/usage.md): resources and tools
 - [Development](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/development.md): testing, contributing, credits
-- [Related projects and listings](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/related.md)
+- [Related projects](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/related.md): the family and registry listings
 
-Related: [LynxPrompt](https://github.com/GeiserX/LynxPrompt), the self-hosted platform this server talks to.
+## Related projects
+
+[LynxPrompt](https://github.com/GeiserX/LynxPrompt), the self-hosted platform this server talks to.
 
 ## License
 
-[GPL-3.0](https://github.com/GeiserX/lynxprompt-mcp/blob/main/LICENSE)
+[GPL-3.0-or-later](https://github.com/GeiserX/lynxprompt-mcp/blob/main/LICENSE)
