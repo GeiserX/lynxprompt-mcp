@@ -106,14 +106,14 @@ snapshot:
   name_template: "snapshot-{{ .ShortCommit }}"
 
 changelog:
-  # goreleaser matches these against "<sha> <subject>", so anchor after the
-  # sha; the catch-all keeps every other commit in the notes.
+  # goreleaser matches these against the bare commit subject; the catch-all
+  # keeps every other commit in the notes.
   groups:
     - title: "Features"
-      regexp: '^.*?feat(\([[:word:]-]+\))??!?:.+$'
+      regexp: '^feat(\([[:word:]-]+\))??!?:.+$'
       order: 0
     - title: "Fixes"
-      regexp: '^.*?fix(\([[:word:]-]+\))??!?:.+$'
+      regexp: '^fix(\([[:word:]-]+\))??!?:.+$'
       order: 1
     - title: "Other changes"
       order: 999

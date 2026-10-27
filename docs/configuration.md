@@ -9,7 +9,7 @@
 | `TRANSPORT` | _(empty = HTTP)_ | `stdio` for stdio. The npm package always uses stdio; the Docker image defaults to stdio. |
 | `LISTEN_ADDR` | `127.0.0.1:8080` (Docker: `0.0.0.0:8080`) | HTTP listen address. |
 | `MCP_AUTH_TOKEN` | _(empty)_ | Bearer token for the HTTP endpoint. Required, and at least 32 characters, when `LISTEN_ADDR` is not loopback. Generate one with `openssl rand -hex 32`. |
-| `MCP_ALLOWED_ORIGINS` | _(empty)_ | Comma-separated browser origins allowed to call the HTTP endpoint cross-site, e.g. `https://app.example.com`. Clients that are not browsers send no Origin and are unaffected. |
+| `MCP_ALLOWED_ORIGINS` | _(empty)_ | Comma-separated origins, e.g. `https://app.example.com`, that pass the server's cross-origin check. Requests from any other origin get 403. This is not CORS: the server answers no preflight and sends no `Access-Control-*` headers, so a web page on another origin still cannot call it from a browser. Clients that are not browsers send no Origin and are unaffected. |
 
 In HTTP mode they can also come from a `.env` file (see `.env.example`).
 
