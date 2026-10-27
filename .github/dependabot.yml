@@ -1,5 +1,7 @@
 version: 2
 updates:
+  # Major versions are proposed too: ignoring them is what left mcp-go on
+  # v0.58.0 after v1.x shipped the 2026-07-28 protocol.
   - package-ecosystem: gomod
     directory: /
     schedule:
@@ -9,10 +11,6 @@ updates:
         update-types:
           - minor
           - patch
-    ignore:
-      - dependency-name: '*'
-        update-types:
-          - version-update:semver-major
   - package-ecosystem: npm
     directory: /
     schedule:
