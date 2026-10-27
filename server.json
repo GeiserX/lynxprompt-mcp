@@ -1,10 +1,29 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.GeiserX/lynxprompt-mcp",
-  "description": "MCP server for LynxPrompt — browse, search, and manage AI configuration blueprints",
+  "title": "LynxPrompt",
+  "description": "Search, read and manage AI agent instruction blueprints (AGENTS.md, CLAUDE.md) on LynxPrompt",
+  "websiteUrl": "https://github.com/GeiserX/lynxprompt-mcp",
+  "icons": [
+    {
+      "src": "https://lynxprompt.com/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": [
+        "any"
+      ]
+    },
+    {
+      "src": "https://lynxprompt.com/icon-192.png",
+      "mimeType": "image/png",
+      "sizes": [
+        "192x192"
+      ]
+    }
+  ],
   "repository": {
     "url": "https://github.com/GeiserX/lynxprompt-mcp",
-    "source": "github"
+    "source": "github",
+    "id": "1198347204"
   },
   "version": "0.1.2",
   "packages": [
@@ -17,18 +36,27 @@
       },
       "environmentVariables": [
         {
-          "name": "LYNXPROMPT_URL",
-          "description": "LynxPrompt instance URL (e.g. https://lynxprompt.com)",
-          "isRequired": true,
-          "format": "string",
-          "isSecret": false
-        },
-        {
           "name": "LYNXPROMPT_TOKEN",
-          "description": "LynxPrompt API token (lp_xxx format)",
+          "description": "LynxPrompt API token (lp_...), created under Settings > API tokens. Needed for everything except search_blueprints.",
           "isRequired": true,
           "format": "string",
           "isSecret": true
+        },
+        {
+          "name": "LYNXPROMPT_URL",
+          "description": "LynxPrompt instance URL; https:// unless the host is loopback.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false,
+          "default": "https://lynxprompt.com"
+        },
+        {
+          "name": "LYNXPROMPT_READ_ONLY",
+          "description": "Set to true to register only the read tools (no create, update or delete).",
+          "isRequired": false,
+          "format": "boolean",
+          "isSecret": false,
+          "default": "false"
         }
       ]
     },
@@ -40,18 +68,27 @@
       },
       "environmentVariables": [
         {
-          "name": "LYNXPROMPT_URL",
-          "description": "LynxPrompt instance URL (e.g. https://lynxprompt.com)",
-          "isRequired": true,
-          "format": "string",
-          "isSecret": false
-        },
-        {
           "name": "LYNXPROMPT_TOKEN",
-          "description": "LynxPrompt API token (lp_xxx format)",
+          "description": "LynxPrompt API token (lp_...), created under Settings > API tokens. Needed for everything except search_blueprints.",
           "isRequired": true,
           "format": "string",
           "isSecret": true
+        },
+        {
+          "name": "LYNXPROMPT_URL",
+          "description": "LynxPrompt instance URL; https:// unless the host is loopback.",
+          "isRequired": false,
+          "format": "string",
+          "isSecret": false,
+          "default": "https://lynxprompt.com"
+        },
+        {
+          "name": "LYNXPROMPT_READ_ONLY",
+          "description": "Set to true to register only the read tools (no create, update or delete).",
+          "isRequired": false,
+          "format": "boolean",
+          "isSecret": false,
+          "default": "false"
         }
       ]
     }

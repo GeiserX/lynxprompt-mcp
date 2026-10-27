@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"encoding/base64"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -86,15 +87,18 @@ func makeCallToolRequest(args map[string]any) mcp.CallToolRequest {
 // ---------------------------------------------------------------------------
 
 func TestSearchBlueprints_returns_results_on_success(t *testing.T) {
-	srv, rec := recordingAPI(t, 200, `[{"id":"1","name":"found"}]`)
+	srv, rec := recordingAPI(t, 200, `{"templates":[{"id":"1","name":"found"}],"total":1,"hasMore":false}`)
 	lp := client.New(srv.URL, "tok")
 	_, handler := NewSearchBlueprints(lp)
 
 	req := makeCallToolRequest(map[string]any{
 		"query":    "test",
 		"category": "dev",
-		"type":     "AGENTS_MD",
-		"tags":     "go,mcp",
+		"type":     "configs",
+		"tags":     []any{"go", "mcp"},
+		"sort":     "recent",
+		"page":     float64(2),
+		"limit":    float64(20),
 	})
 
 	result, err := handler(context.Background(), req)
@@ -107,8 +111,16 @@ func TestSearchBlueprints_returns_results_on_success(t *testing.T) {
 	if !strings.Contains(rec.Query, "q=test") {
 		t.Errorf("query missing q param: %q", rec.Query)
 	}
-	if !strings.Contains(rec.Query, "category=dev") {
-		t.Errorf("query missing category: %q", rec.Query)
+	for _, want := range []string{"category=dev", "type=configs", "tags=go%2Cmcp", "sort=recent", "page=2", "limit=20"} {
+		if !strings.Contains(rec.Query, want) {
+			t.Errorf("query %q missing %q", rec.Query, want)
+		}
+	}
+	if result.IsError {
+		t.Fatalf("unexpected tool error: %+v", result.Content)
+	}
+	if result.StructuredContent == nil {
+		t.Error("missing structuredContent")
 	}
 	// Check result text
 	if len(result.Content) == 0 {
@@ -123,19 +135,34 @@ func TestSearchBlueprints_returns_results_on_success(t *testing.T) {
 	}
 }
 
-func TestSearchBlueprints_returns_error_when_query_missing(t *testing.T) {
-	srv, _ := recordingAPI(t, 200, `[]`)
+func TestSearchBlueprints_lists_popular_when_query_missing(t *testing.T) {
+	srv, rec := recordingAPI(t, 200, `{"templates":[]}`)
 	lp := client.New(srv.URL, "tok")
 	_, handler := NewSearchBlueprints(lp)
 
-	req := makeCallToolRequest(map[string]any{})
-
-	result, err := handler(context.Background(), req)
+	result, err := handler(context.Background(), makeCallToolRequest(map[string]any{}))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
+	if result.IsError {
+		t.Errorf("an empty query must list popular blueprints, got error %+v", result.Content)
+	}
+	if strings.Contains(rec.Query, "q=") {
+		t.Errorf("empty query should not send q: %q", rec.Query)
+	}
+}
+
+func TestSearchBlueprints_rejects_a_file_type_as_type_filter(t *testing.T) {
+	srv, rec := recordingAPI(t, 200, `{"templates":[]}`)
+	lp := client.New(srv.URL, "tok")
+	_, handler := NewSearchBlueprints(lp)
+
+	result, _ := handler(context.Background(), makeCallToolRequest(map[string]any{"type": "AGENTS_MD"}))
 	if !result.IsError {
-		t.Error("expected IsError=true when query is missing")
+		t.Error("type=AGENTS_MD is silently ignored upstream; the tool must reject it")
+	}
+	if rec.Method != "" {
+		t.Error("the API was called with an invalid type")
 	}
 }
 
@@ -205,6 +232,13 @@ func TestCreateBlueprint_sends_correct_request(t *testing.T) {
 	if !strings.Contains(rec.Body, `"visibility":"PUBLIC"`) {
 		t.Errorf("body missing visibility: %s", rec.Body)
 	}
+	wantB64 := base64.StdEncoding.EncodeToString([]byte("blueprint content here"))
+	if !strings.Contains(rec.Body, `"content_base64":"`+wantB64+`"`) {
+		t.Errorf("content must travel as content_base64: %s", rec.Body)
+	}
+	if strings.Contains(rec.Body, `"content":`) {
+		t.Errorf("raw content must not be sent: %s", rec.Body)
+	}
 	tc := result.Content[0].(mcp.TextContent)
 	if !strings.Contains(tc.Text, "new-bp") {
 		t.Errorf("result = %q", tc.Text)
@@ -217,7 +251,7 @@ func TestCreateBlueprint_returns_error_when_name_missing(t *testing.T) {
 	_, handler := NewCreateBlueprint(lp)
 
 	req := makeCallToolRequest(map[string]any{
-		"content": "x",
+		"content": "long enough content",
 		"type":    "AGENTS_MD",
 	})
 	result, _ := handler(context.Background(), req)
@@ -241,18 +275,21 @@ func TestCreateBlueprint_returns_error_when_content_missing(t *testing.T) {
 	}
 }
 
-func TestCreateBlueprint_returns_error_when_type_missing(t *testing.T) {
-	srv, _ := recordingAPI(t, 201, `{}`)
+func TestCreateBlueprint_lets_upstream_default_the_type(t *testing.T) {
+	srv, rec := recordingAPI(t, 201, `{"success":true,"blueprint":{"id":"bp_1","type":"AGENTS_MD"}}`)
 	lp := client.New(srv.URL, "tok")
 	_, handler := NewCreateBlueprint(lp)
 
 	req := makeCallToolRequest(map[string]any{
 		"name":    "test",
-		"content": "x",
+		"content": "long enough content",
 	})
 	result, _ := handler(context.Background(), req)
-	if !result.IsError {
-		t.Error("expected error when type missing")
+	if result.IsError {
+		t.Errorf("type is optional (upstream defaults to AGENTS_MD), got %+v", result.Content)
+	}
+	if strings.Contains(rec.Body, `"type"`) {
+		t.Errorf("body should not carry a type: %s", rec.Body)
 	}
 }
 
@@ -263,7 +300,7 @@ func TestCreateBlueprint_returns_error_when_api_fails(t *testing.T) {
 
 	req := makeCallToolRequest(map[string]any{
 		"name":    "test",
-		"content": "x",
+		"content": "long enough content",
 		"type":    "AGENTS_MD",
 	})
 	result, _ := handler(context.Background(), req)
@@ -279,7 +316,7 @@ func TestCreateBlueprint_without_optional_fields(t *testing.T) {
 
 	req := makeCallToolRequest(map[string]any{
 		"name":    "test",
-		"content": "x",
+		"content": "long enough content",
 		"type":    "AGENTS_MD",
 	})
 	_, err := handler(context.Background(), req)
@@ -336,7 +373,7 @@ func TestUpdateBlueprint_returns_error_when_id_missing(t *testing.T) {
 	_, handler := NewUpdateBlueprint(lp)
 
 	req := makeCallToolRequest(map[string]any{
-		"name": "x",
+		"name": "valid name",
 	})
 	result, _ := handler(context.Background(), req)
 	if !result.IsError {
