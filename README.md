@@ -92,7 +92,7 @@ args = ["-y", "lynxprompt-mcp"]
 env = { LYNXPROMPT_TOKEN = "lp_..." }
 ```
 
-**Docker** (stdio, any client): command `docker`, args `["run", "-i", "--rm", "-e", "TRANSPORT=stdio", "-e", "LYNXPROMPT_TOKEN", "drumsergio/lynxprompt-mcp:v0.1.2"]`.
+**Docker** (stdio, any client): command `docker`, args `["run", "-i", "--rm", "-e", "TRANSPORT=stdio", "-e", "LYNXPROMPT_TOKEN", "drumsergio/lynxprompt-mcp:v0.2.0"]`.
 
 The npm package downloads the release binary on first run and checks its sha256 against the checksums shipped inside the package. The HTTP server, Docker Compose and local builds are in [Getting started](https://github.com/GeiserX/lynxprompt-mcp/blob/main/docs/getting-started.md).
 
