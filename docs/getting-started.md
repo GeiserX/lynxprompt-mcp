@@ -13,7 +13,7 @@ On first run it downloads the Go binary for your platform from the matching GitH
 MCP clients start the image with `docker run -i`:
 
 ```sh
-docker run -i --rm -e TRANSPORT=stdio -e LYNXPROMPT_TOKEN=lp_xxx drumsergio/lynxprompt-mcp:v0.1.2
+docker run -i --rm -e TRANSPORT=stdio -e LYNXPROMPT_TOKEN=lp_xxx drumsergio/lynxprompt-mcp:v0.2.0
 ```
 
 ## Docker Compose, HTTP
@@ -21,7 +21,7 @@ docker run -i --rm -e TRANSPORT=stdio -e LYNXPROMPT_TOKEN=lp_xxx drumsergio/lynx
 ```yaml
 services:
   lynxprompt-mcp:
-    image: drumsergio/lynxprompt-mcp:v0.1.2
+    image: drumsergio/lynxprompt-mcp:v0.2.0
     ports:
       - "127.0.0.1:8080:8080"
     environment:
