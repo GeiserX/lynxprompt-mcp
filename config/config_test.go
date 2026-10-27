@@ -62,3 +62,37 @@ func TestGetEnv(t *testing.T) {
 		})
 	}
 }
+
+func TestLoadConfig_ReadOnly(t *testing.T) {
+	for val, want := range map[string]bool{"": false, "0": false, "false": false, "1": true, "true": true, "TRUE": true, "yes": true} {
+		t.Setenv("LYNXPROMPT_READ_ONLY", val)
+		if got := LoadConfig().ReadOnly; got != want {
+			t.Errorf("LYNXPROMPT_READ_ONLY=%q: ReadOnly = %v, want %v", val, got, want)
+		}
+	}
+}
+
+func TestValidate(t *testing.T) {
+	tests := []struct {
+		url       string
+		allowHTTP bool
+		ok        bool
+	}{
+		{"https://lynxprompt.com", false, true},
+		{"https://lp.example.org/", false, true},
+		{"http://localhost:3000", false, true},
+		{"http://127.0.0.1:3000", false, true},
+		{"http://[::1]:3000", false, true},
+		{"http://lp.example.org", false, false},
+		{"http://lp.example.org", true, true},
+		{"ftp://lp.example.org", true, false},
+		{"lynxprompt.com", false, false},
+		{"", false, false},
+	}
+	for _, tc := range tests {
+		err := LynxPromptConfig{BaseURL: tc.url, AllowHTTP: tc.allowHTTP}.Validate()
+		if (err == nil) != tc.ok {
+			t.Errorf("Validate(%q, allowHTTP=%v) = %v, want ok=%v", tc.url, tc.allowHTTP, err, tc.ok)
+		}
+	}
+}

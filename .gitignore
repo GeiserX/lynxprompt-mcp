@@ -21,7 +21,8 @@ go.work.sum
 dist/
 bin/
 node_modules/
-server
+# the binary "go build ./cmd/server" writes, not the cmd/server package
+/server
 
 # Beads: bead text lives in the Dolt tracker only, never in git
 .beads/issues.jsonl
