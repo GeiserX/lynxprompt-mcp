@@ -28,3 +28,6 @@ node_modules/
 .beads/issues.jsonl
 .beads/interactions.jsonl
 .beads/events.jsonl
+
+# release.yml copies the release checksums into the npm package at publish time
+/checksums.txt

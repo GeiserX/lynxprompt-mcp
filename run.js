@@ -1,22 +1,27 @@
 #!/usr/bin/env node
 "use strict";
 
-const { execFileSync } = require("child_process");
-const path = require("path");
-const fs = require("fs");
+const { spawn } = require("child_process");
+const { install } = require("./postinstall.js");
 
-const BIN_NAME = process.platform === "win32" ? "lynxprompt-mcp.exe" : "lynxprompt-mcp";
-const BIN_PATH = path.join(__dirname, "bin", BIN_NAME);
-
-if (!fs.existsSync(BIN_PATH)) {
-  console.error("lynxprompt-mcp binary not found. Run: npm run postinstall");
-  process.exit(1);
-}
-
-const env = Object.assign({}, process.env, { TRANSPORT: "stdio" });
-
-try {
-  execFileSync(BIN_PATH, [], { env, stdio: "inherit" });
-} catch (err) {
-  process.exit(err.status || 1);
-}
+// npm 12 no longer runs postinstall by default, so the binary may not be
+// there yet: fetch and verify it on first use.
+install()
+  .then((binPath) => {
+    const env = Object.assign({}, process.env, { TRANSPORT: "stdio" });
+    const child = spawn(binPath, process.argv.slice(2), { env, stdio: "inherit" });
+    for (const sig of ["SIGINT", "SIGTERM"]) {
+      process.on(sig, () => child.kill(sig));
+    }
+    child.on("exit", (code, signal) => {
+      process.exit(signal ? 1 : code ?? 1);
+    });
+    child.on("error", (err) => {
+      process.stderr.write(`lynxprompt-mcp: could not start ${binPath}: ${err.message}\n`);
+      process.exit(1);
+    });
+  })
+  .catch((err) => {
+    process.stderr.write(`lynxprompt-mcp: ${err.message}\n`);
+    process.exit(1);
+  });
