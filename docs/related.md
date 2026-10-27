@@ -3,7 +3,7 @@
 ## Listings
 
 <p>
-  <img src="https://img.shields.io/badge/Go-1.24-blue?style=flat-square&logo=go&logoColor=white" alt="Go"/>
+  <img src="https://img.shields.io/badge/Go-1.25-blue?style=flat-square&logo=go&logoColor=white" alt="Go"/>
   <a href="https://github.com/GeiserX/lynxprompt-mcp/stargazers"><img src="https://img.shields.io/github/stars/GeiserX/lynxprompt-mcp?style=flat-square&logo=github" alt="GitHub Stars"/></a>
   <a href="https://registry.modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-Official%20Registry-E6522C?style=flat-square" alt="Official MCP Registry"/></a>
   <a href="https://glama.ai/mcp/servers/GeiserX/lynxprompt-mcp"><img src="https://glama.ai/mcp/servers/GeiserX/lynxprompt-mcp/badges/score.svg" alt="Glama MCP Server" /></a>

@@ -13,12 +13,12 @@ func RegisterBlueprints(s *server.MCPServer, lp *client.Client) {
 	res := mcp.NewResource(
 		"lynxprompt://blueprints",
 		"Blueprint list",
-		mcp.WithResourceDescription("All blueprints for the authenticated user"),
+		mcp.WithResourceDescription("Up to 100 most recently changed blueprints of the authenticated user (the list_blueprints tool pages past that)"),
 		mcp.WithMIMEType("application/json"),
 	)
 
 	s.AddResource(res, func(ctx context.Context, req mcp.ReadResourceRequest) ([]mcp.ResourceContents, error) {
-		body, err := lp.ListBlueprints(ctx)
+		body, err := lp.ListBlueprints(ctx, client.ListOptions{Limit: 100})
 		if err != nil {
 			return nil, err
 		}

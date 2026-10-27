@@ -4,6 +4,9 @@ on:
   push:
     tags: ["v*.*.*"]
 
+permissions:
+  contents: read
+
 jobs:
   check-version:
     # Runs before anything publishes: the tag, package.json and server.json must
@@ -13,14 +16,15 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       - name: Tag matches package.json and server.json
         run: |
           v="${GITHUB_REF_NAME#v}"
-          # server.json carries the version twice: its own, and packages[0].version,
-          # the npm version the MCP registry installs.
+          # server.json carries the version three times: its own, packages[0].version
+          # (the npm version the MCP registry installs) and the Docker tag in
+          # packages[1].identifier, checked below.
           for field in "package.json:.version" "server.json:.version" "server.json:.packages[0].version"; do
             f="${field%%:*}"
             got=$(node -p "require('./$f')${field#*:}")
@@ -29,21 +33,30 @@ jobs:
               exit 1
             fi
           done
+          oci=$(node -p "require('./server.json').packages[1].identifier")
+          if [ "$oci" != "drumsergio/lynxprompt-mcp:v$v" ]; then
+            echo "::error file=server.json::.packages[1].identifier is $oci, the tag says drumsergio/lynxprompt-mcp:v$v"
+            exit 1
+          fi
 
   goreleaser:
     needs: check-version
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      packages: write
-      id-token: write
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-go@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The changelog is built from the commits since the previous tag.
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version-file: go.mod
-      - uses: docker/setup-buildx-action@v4
-      - uses: docker/login-action@v4
+          # A release builds from a clean module download, never a restored cache.
+          cache: false
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4.4.1
+      - uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -65,10 +78,10 @@ jobs:
             fi
           done
           exit "$missing"
-      - uses: goreleaser/goreleaser-action@v7
+      - uses: goreleaser/goreleaser-action@a4f02ab5355a589de60d917a659ce617ed19b3de # v7.3.0
         with:
           distribution: goreleaser
-          version: latest
+          version: v2.19.0
           args: release --clean
         env:
           GORELEASER_CURRENT_TAG: ${{ github.ref_name }}
@@ -87,15 +100,30 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-node@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           # Trusted publishing needs npm 11.5.1+ and Node 22.14+; Node 24 ships both, so no ad-hoc npm install.
           node-version: '24'
           # A stale runner cache could hold an early 24.x with npm below 11.5.1.
           check-latest: true
           registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
       - run: npm version "${GITHUB_REF_NAME#v}" --no-git-tag-version --allow-same-version
+      # postinstall.js verifies the downloaded binary against this file, so the
+      # expected hashes ship inside the npm tarball instead of being fetched
+      # from the release at install time.
+      - name: Bundle the release checksums into the package
+        run: |
+          curl -fsSL --retry 5 -o checksums.txt \
+            "https://github.com/${GITHUB_REPOSITORY}/releases/download/${GITHUB_REF_NAME}/checksums.txt"
+          v="${GITHUB_REF_NAME#v}"
+          for asset in linux_amd64.tar.gz linux_arm64.tar.gz darwin_amd64.tar.gz darwin_arm64.tar.gz windows_amd64.zip windows_arm64.zip; do
+            grep -q "  lynxprompt-mcp_${v}_${asset}$" checksums.txt || { echo "::error::checksums.txt lacks ${asset}"; exit 1; }
+          done
+          npm pack --dry-run 2>&1 | grep -q checksums.txt || { echo "::error::checksums.txt is not in the package"; exit 1; }
       - run: npm publish --loglevel verbose
 
   mcp-registry:

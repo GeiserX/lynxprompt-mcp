@@ -65,6 +65,9 @@ dockers:
       - .goreleaser.yaml
     build_flag_templates:
       - "--platform=linux/amd64"
+      - "--build-arg=VERSION={{ .Version }}"
+      - "--build-arg=COMMIT={{ .ShortCommit }}"
+      - "--build-arg=DATE={{ .Date }}"
   # ------------- arm64 -------------
   - image_templates:
       - "drumsergio/lynxprompt-mcp:{{ .Tag }}-arm64"
@@ -84,6 +87,9 @@ dockers:
       - .goreleaser.yaml
     build_flag_templates:
       - "--platform=linux/arm64"
+      - "--build-arg=VERSION={{ .Version }}"
+      - "--build-arg=COMMIT={{ .ShortCommit }}"
+      - "--build-arg=DATE={{ .Date }}"
 
 docker_manifests:
   # stitch the per-arch images into a combined tag = multi-arch
@@ -100,8 +106,14 @@ snapshot:
   name_template: "snapshot-{{ .ShortCommit }}"
 
 changelog:
+  # goreleaser matches these against the bare commit subject; the catch-all
+  # keeps every other commit in the notes.
   groups:
     - title: "Features"
-      regexp: '^feat'
+      regexp: '^feat(\([[:word:]-]+\))??!?:.+$'
+      order: 0
     - title: "Fixes"
-      regexp: '^fix'
+      regexp: '^fix(\([[:word:]-]+\))??!?:.+$'
+      order: 1
+    - title: "Other changes"
+      order: 999
