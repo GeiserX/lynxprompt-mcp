@@ -21,6 +21,21 @@ test("expectedHash does not match a suffix of another asset name", () => {
   assert.throws(() => expectedHash(text, "lynxprompt-mcp_1.0.0_linux_amd64.tar.gz"), /no sha256/);
 });
 
+test("expectedHash stays linear on a line of many spaces", () => {
+  // A backtracking pattern takes seconds here (the code blocks, so a test
+  // timeout cannot catch it); a linear parse takes milliseconds.
+  const text = `${HASH}${" ".repeat(100000)}x\u2028y\n`;
+  const start = process.hrtime.bigint();
+  assert.throws(() => expectedHash(text, "lynxprompt-mcp_1.0.0_linux_amd64.tar.gz"), /no sha256/);
+  const ms = Number(process.hrtime.bigint() - start) / 1e6;
+  assert.ok(ms < 500, `expectedHash took ${ms.toFixed(0)} ms`);
+});
+
+test("expectedHash accepts the binary-mode marker", () => {
+  const text = `${HASH} *lynxprompt-mcp_1.0.0_linux_amd64.tar.gz\r\n`;
+  assert.strictEqual(expectedHash(text, "lynxprompt-mcp_1.0.0_linux_amd64.tar.gz"), HASH);
+});
+
 test("checkURL refuses http and foreign hosts", () => {
   assert.throws(() => checkURL("http://github.com/GeiserX/x"), /non-https/);
   assert.throws(() => checkURL("https://evil.example/x"), /unexpected host/);

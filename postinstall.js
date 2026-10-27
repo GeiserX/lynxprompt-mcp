@@ -54,11 +54,22 @@ function getAssetName(version = VERSION, platform, arch) {
 }
 
 // expectedHash returns the sha256 for assetName from checksums.txt content.
+// Lines are "<sha256> <name>" or "<sha256> *<name>". Parsed by hand: a
+// regex like /^(hex{64})\s+(.+)$/ backtracks quadratically on long runs of
+// spaces.
 function expectedHash(checksumsText, assetName) {
-  for (const line of checksumsText.split(/\r?\n/)) {
-    const m = line.trim().match(/^([0-9a-f]{64})\s+\*?(.+)$/i);
-    if (m && m[2] === assetName) {
-      return m[1].toLowerCase();
+  for (const raw of checksumsText.split("\n")) {
+    const line = raw.trim();
+    const hash = line.slice(0, 64);
+    if (!/^[0-9a-f]{64}$/i.test(hash) || !/\s/.test(line.charAt(64))) {
+      continue;
+    }
+    let name = line.slice(65).trimStart();
+    if (name.startsWith("*")) {
+      name = name.slice(1);
+    }
+    if (name === assetName) {
+      return hash.toLowerCase();
     }
   }
   throw new Error(`no sha256 for ${assetName} in checksums.txt`);
