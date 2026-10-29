@@ -255,3 +255,34 @@ func TestGetBlueprint_description_covers_marketplace_and_team_blueprints(t *test
 		}
 	}
 }
+
+// The API ignores team_id unless the same request sets visibility TEAM, so the
+// tools refuse it instead of reporting a move that never happened.
+func TestWriteTools_refuse_team_id_without_team_visibility(t *testing.T) {
+	srv, rec := recordingAPI(t, 200, `{"id":"bp_a"}`)
+	lp := client.New(srv.URL, "tok")
+	_, create := NewCreateBlueprint(lp)
+	_, update := NewUpdateBlueprint(lp)
+	cases := []struct {
+		name string
+		h    server.ToolHandlerFunc
+		args map[string]any
+	}{
+		{"create", create, map[string]any{"name": "Rules", "content": "some long content", "team_id": "team_b"}},
+		{"update", update, map[string]any{"id": "bp_a", "name": "Renamed", "team_id": "team_b"}},
+		{"update private", update, map[string]any{"id": "bp_a", "visibility": "PRIVATE", "team_id": "team_b"}},
+	}
+	for _, c := range cases {
+		rec.Method = ""
+		res, err := c.h(context.Background(), makeCallToolRequest(c.args))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !res.IsError || !strings.Contains(res.Content[0].(mcp.TextContent).Text, "visibility TEAM") {
+			t.Errorf("%s: want a visibility TEAM error, got %+v", c.name, res.Content)
+		}
+		if rec.Method != "" {
+			t.Errorf("%s: the API was called", c.name)
+		}
+	}
+}

@@ -40,8 +40,8 @@ var (
 		mcp.Enum(visibilities...),
 	)
 	teamIDProperty = mcp.WithString("team_id",
-		mcp.Description("Team to share a TEAM blueprint with. Needed only when you belong to more than "+
-			"one team; with one team, that team is used."),
+		mcp.Description("Team to share a TEAM blueprint with; send it together with visibility TEAM. "+
+			"Needed only when you belong to more than one team; with one team, that team is used."),
 		mcp.Pattern(`^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`),
 	)
 	categoryProperty = mcp.WithString("category",
@@ -111,12 +111,15 @@ func contentField(content string, body map[string]any) error {
 	return nil
 }
 
-// teamIDField copies team_id into body. The API reads it only for TEAM
-// visibility, to pick one of the user's teams.
+// teamIDField copies team_id into body. The API reads it only in a request
+// that also sets visibility TEAM, and silently ignores it otherwise.
 func teamIDField(req mcp.CallToolRequest, body map[string]any) error {
 	if v, ok := optString(req, "team_id"); ok {
 		if err := client.ValidateID(v); err != nil {
 			return err
+		}
+		if body["visibility"] != "TEAM" {
+			return fmt.Errorf("team_id only applies with visibility TEAM; pass visibility TEAM as well")
 		}
 		body["team_id"] = v
 	}
