@@ -25,12 +25,12 @@
     "source": "github",
     "id": "1198347204"
   },
-  "version": "0.2.1",
+  "version": "0.3.0",
   "packages": [
     {
       "registryType": "npm",
       "identifier": "lynxprompt-mcp",
-      "version": "0.2.1",
+      "version": "0.3.0",
       "transport": {
         "type": "stdio"
       },
@@ -62,7 +62,7 @@
     },
     {
       "registryType": "oci",
-      "identifier": "drumsergio/lynxprompt-mcp:v0.2.1",
+      "identifier": "drumsergio/lynxprompt-mcp:v0.3.0",
       "transport": {
         "type": "stdio"
       },
