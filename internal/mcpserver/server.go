@@ -58,8 +58,8 @@ func New(lp *client.Client, opts Options) *server.MCPServer {
 		server.WithDescription("Search, read and manage AI agent instruction blueprints on a LynxPrompt instance."),
 		server.WithWebsiteURL("https://github.com/GeiserX/lynxprompt-mcp"),
 		server.WithIcons(
-			mcp.Icon{Src: "https://lynxprompt.com/favicon.svg", MIMEType: "image/svg+xml", Sizes: []string{"any"}},
-			mcp.Icon{Src: "https://lynxprompt.com/icon-192.png", MIMEType: "image/png", Sizes: []string{"192x192"}},
+			mcp.Icon{Src: "https://lynxprompt.geiser.cloud/favicon.svg", MIMEType: "image/svg+xml", Sizes: []string{"any"}},
+			mcp.Icon{Src: "https://lynxprompt.geiser.cloud/icon-192.png", MIMEType: "image/png", Sizes: []string{"192x192"}},
 		),
 		server.WithCacheHints(listCacheTTLMs, mcp.CacheScopePublic),
 		server.WithMethodCacheHints(mcp.MethodResourcesRead, 0, mcp.CacheScopePrivate),

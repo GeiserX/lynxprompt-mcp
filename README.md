@@ -14,7 +14,7 @@
 
 <p align="center"><strong>An MCP server for any LynxPrompt instance. LLMs use it to browse, search and manage AI configuration blueprints.</strong></p>
 
-It works with [lynxprompt.com](https://lynxprompt.com) or your own self-hosted LynxPrompt, over HTTP or stdio.
+It works with [lynxprompt.geiser.cloud](https://lynxprompt.geiser.cloud) or your own self-hosted LynxPrompt, over HTTP or stdio.
 
 ## Features
 

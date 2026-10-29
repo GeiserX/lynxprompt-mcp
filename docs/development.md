@@ -16,7 +16,7 @@ LynxPrompt-MCP follows the [Contributor Covenant](http://contributor-covenant.or
 
 ## Credits
 
-[LynxPrompt](https://lynxprompt.com) -- AI configuration blueprint management
+[LynxPrompt](https://lynxprompt.geiser.cloud) -- AI configuration blueprint management
 
 [MCP-GO](https://github.com/mark3labs/mcp-go) -- modern MCP implementation
 

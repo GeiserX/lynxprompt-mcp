@@ -22,7 +22,7 @@ COPY --from=builder /out/lynxprompt-mcp /usr/local/bin/lynxprompt-mcp
 # MCP_AUTH_TOKEN of 32+ characters: it listens on every interface in here.
 ENV TRANSPORT=stdio
 ENV LISTEN_ADDR=0.0.0.0:8080
-ENV LYNXPROMPT_URL=https://lynxprompt.com
+ENV LYNXPROMPT_URL=https://lynxprompt.geiser.cloud
 EXPOSE 8080
 USER 65532:65532
 ENTRYPOINT ["/usr/local/bin/lynxprompt-mcp"]
