@@ -27,7 +27,7 @@ const (
     "visibility": {"type": "string", "description": "PRIVATE, TEAM or PUBLIC"},
     "hierarchy_id": ` + nullableString + `,
     "parent_id": ` + nullableString + `,
-    "repository_path": ` + nullableString + `,
+    "repository_path": {"type": ["string", "null"], "description": "Path in the repository; only the file name for a public blueprint of someone outside your team"},
     "content_checksum": {"type": ["string", "null"], "description": "Pass as expected_checksum to update_blueprint"},
     "created_at": {"type": "string"},
     "updated_at": {"type": "string"}

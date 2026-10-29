@@ -239,3 +239,19 @@ func TestCreateBlueprint_sends_hierarchy_fields(t *testing.T) {
 		}
 	}
 }
+
+// get_blueprint reads any blueprint the token can see, which is the only way
+// to fetch a marketplace result's content; its description must not say
+// otherwise, or a model never tries.
+func TestGetBlueprint_description_covers_marketplace_and_team_blueprints(t *testing.T) {
+	tool, _ := NewGetBlueprint(client.New("http://127.0.0.1:1", ""))
+	d := tool.Description
+	if strings.Contains(d, "Only works for blueprints owned") {
+		t.Errorf("description still limits get_blueprint to owned blueprints: %q", d)
+	}
+	for _, want := range []string{"search_blueprints", "team", "Only the owner can update or delete"} {
+		if !strings.Contains(d, want) {
+			t.Errorf("description lacks %q: %q", want, d)
+		}
+	}
+}
