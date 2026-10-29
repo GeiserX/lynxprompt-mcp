@@ -20,8 +20,10 @@ const (
 	// LynxPrompt payload is a single blueprint with its content, far below this.
 	maxResponseBytes = 4 << 20
 	// maxErrorBodyBytes caps how much of an error response is read to find the
-	// JSON {"error","message"} fields. Nothing past it is ever shown.
-	maxErrorBodyBytes = 4 << 10
+	// JSON {"error","message"} fields. Nothing past it is ever shown. It must
+	// hold the whole 422 sensitive-data answer, which lists every match (about
+	// 250 bytes each), or the JSON is cut and fails to parse.
+	maxErrorBodyBytes = 64 << 10
 )
 
 // idPattern accepts LynxPrompt API ids (bp_..., ha_..., usr_... or the bare
