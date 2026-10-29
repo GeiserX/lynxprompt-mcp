@@ -134,10 +134,20 @@ jobs:
             grep -q "  lynxprompt-mcp_${v}_${asset}$" checksums.txt || { echo "::error::checksums.txt lacks ${asset}"; exit 1; }
           done
           npm pack --dry-run 2>&1 | grep -q checksums.txt || { echo "::error::checksums.txt is not in the package"; exit 1; }
-      - run: npm publish --loglevel verbose
+      # A pre-release (v0.3.0-rc1) goes to the "next" dist-tag, so npx and a
+      # plain install keep getting the last stable version.
+      - name: Publish
+        run: |
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then
+            npm publish --tag next --loglevel verbose
+          else
+            npm publish --loglevel verbose
+          fi
 
   mcp-registry:
     needs: npm-publish
+    # The registry has no pre-release channel: its latest is what clients install.
+    if: ${{ !contains(github.ref_name, '-') }}
     permissions:
       contents: read
       id-token: write

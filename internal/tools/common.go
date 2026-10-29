@@ -172,16 +172,19 @@ func encodeContent(body map[string]any, content string) {
 var (
 	visibilities = []string{"PRIVATE", "TEAM", "PUBLIC"}
 
-	// blueprintTypes are the file formats LynxPrompt knows, from its API.
+	// blueprintTypes are the agent file formats of LynxPrompt's TemplateType
+	// enum. TestBlueprintTypes_match_the_upstream_enum keeps them in step.
 	blueprintTypes = []string{
 		"AGENTS_MD", "CLAUDE_MD", "COPILOT_INSTRUCTIONS", "WINDSURF_RULES",
 		"CLINE_RULES", "CODEX_MD", "CURSOR_RULES", "CURSOR_MDC", "GEMINI_MD",
 		"ZED_INSTRUCTIONS", "VOID_CONFIG", "TRAE_RULES", "IDX_CONFIG",
 		"ROO_RULES", "CONTINUE_CONFIG", "CODY_CONFIG", "TABNINE_CONFIG",
 		"AMAZONQ_RULES", "AUGMENT_RULES", "KILOCODE_RULES", "JUNIE_GUIDELINES",
-		"KIRO_STEERING", "AIDER_MD", "GOOSEHINTS",
+		"KIRO_STEERING", "AIDER_MD", "GOOSEHINTS", "WARP_MD", "OPENCODE_JSON",
+		"OPENHANDS_MD",
 		"CURSOR_COMMAND", "CLAUDE_COMMAND", "WINDSURF_WORKFLOW",
-		"COPILOT_PROMPT", "CONTINUE_PROMPT", "OPENCODE_COMMAND", "CUSTOM",
+		"COPILOT_PROMPT", "CONTINUE_PROMPT", "OPENCODE_COMMAND",
+		"AGENT_SKILL", "MCP_CONFIG", "AGENT_DEFINITION", "CUSTOM",
 	}
 )
 

@@ -18,7 +18,7 @@ It works with [lynxprompt.geiser.cloud](https://lynxprompt.geiser.cloud) or your
 
 ## Features
 
-- Tools to search the public marketplace, list and read your own blueprints and hierarchies, and create, update and delete them. Every tool carries a title, read-only/destructive hints and an output schema.
+- Tools to search the public marketplace, list your own blueprints and hierarchies, read any blueprint you can see, and create, update and delete them. Every tool carries a title, read-only/destructive hints and an output schema.
 - `update_blueprint` takes the `content_checksum` from `get_blueprint` as `expected_checksum`, so it never silently overwrites an edit made elsewhere.
 - `LYNXPROMPT_READ_ONLY=true` registers only the read tools.
 - Read-only resources too: `lynxprompt://blueprints`, `lynxprompt://blueprint/{id}`, `lynxprompt://hierarchies`, `lynxprompt://hierarchy/{id}`, `lynxprompt://user`.
@@ -32,7 +32,7 @@ It works with [lynxprompt.geiser.cloud](https://lynxprompt.geiser.cloud) or your
 |------|--------------|--------------|
 | `search_blueprints` | Search the public marketplace (query, configs/commands, category, tags, sort, page) | no |
 | `list_blueprints` | Your blueprints, paged, filter by visibility | no |
-| `get_blueprint` | One of your blueprints with content and `content_checksum` | no |
+| `get_blueprint` | Any blueprint you can see (yours, your team's, public) with content and `content_checksum` | no |
 | `list_hierarchies` | Your hierarchies (monorepo groupings), paged | no |
 | `get_hierarchy` | One hierarchy with its blueprints, flat and as a tree | no |
 | `create_blueprint` | New blueprint; `visibility: PUBLIC` publishes it | yes |

@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
@@ -698,6 +699,42 @@ func TestAPIError_uses_upstream_json_message_and_checksum(t *testing.T) {
 		t.Errorf("apiErr = %+v", apiErr)
 	}
 	for _, want := range []string{"409", "Conflict - blueprint has been modified", "abc123", "get_blueprint"} {
+		if !strings.Contains(err.Error(), want) {
+			t.Errorf("error %q lacks %q", err.Error(), want)
+		}
+	}
+}
+
+// LynxPrompt's 422 for secrets in a public or MCP_CONFIG blueprint carries
+// every match in sensitive_data, so a few dozen matches pass 4 KiB.
+func TestAPIError_reads_a_large_sensitive_data_answer(t *testing.T) {
+	matches := make([]map[string]any, 40)
+	for i := range matches {
+		matches[i] = map[string]any{
+			"type": "API Key", "line": i + 1, "pattern": "api_key", "snippet": strings.Repeat("x", 180),
+		}
+	}
+	body, _ := json.Marshal(map[string]any{
+		"error":                   "Sensitive data detected",
+		"message":                 "MCP config not saved: found 40 possible secret(s). Remove them.",
+		"requires_acknowledgment": true,
+		"sensitive_data":          matches,
+	})
+	if len(body) < 8<<10 {
+		t.Fatalf("fixture is only %d bytes", len(body))
+	}
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(422)
+		w.Write(body)
+	}))
+	t.Cleanup(srv.Close)
+
+	c := New(srv.URL, "tok")
+	_, err := c.UpdateBlueprint(context.Background(), "bp_1", map[string]any{"name": "x"})
+	if err == nil {
+		t.Fatal("expected error")
+	}
+	for _, want := range []string{"422", "Sensitive data detected", "found 40 possible secret(s)"} {
 		if !strings.Contains(err.Error(), want) {
 			t.Errorf("error %q lacks %q", err.Error(), want)
 		}

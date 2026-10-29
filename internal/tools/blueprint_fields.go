@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/geiserx/lynxprompt-mcp/client"
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
@@ -24,7 +25,9 @@ func contentProperty(desc string, opts ...mcp.PropertyOption) mcp.ToolOption {
 var (
 	typeProperty = mcp.WithString("type",
 		mcp.Description("File format the blueprint is for. AGENTS_MD is AGENTS.md, CLAUDE_MD is CLAUDE.md, "+
-			"CURSOR_MDC a .cursor/rules/*.mdc file, *_COMMAND a slash command, CUSTOM anything else."),
+			"CURSOR_MDC a .cursor/rules/*.mdc file, *_COMMAND a slash command, AGENT_SKILL a skill's SKILL.md, "+
+			"AGENT_DEFINITION a subagent such as .claude/agents/<name>.md, MCP_CONFIG an .mcp.json, "+
+			"CUSTOM anything else."),
 		mcp.Enum(blueprintTypes...),
 	)
 	descriptionProperty = mcp.WithString("description",
@@ -35,6 +38,11 @@ var (
 		mcp.Description("PRIVATE (only you), TEAM (your team) or PUBLIC. PUBLIC publishes the content "+
 			"to the public marketplace where anyone can read it."),
 		mcp.Enum(visibilities...),
+	)
+	teamIDProperty = mcp.WithString("team_id",
+		mcp.Description("Team to share a TEAM blueprint with; send it together with visibility TEAM. "+
+			"Needed only when you belong to more than one team; with one team, that team is used."),
+		mcp.Pattern(`^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$`),
 	)
 	categoryProperty = mcp.WithString("category",
 		mcp.Description("Category slug, e.g. web, devops, saas, mobile, data or other."),
@@ -100,5 +108,20 @@ func contentField(content string, body map[string]any) error {
 		return fmt.Errorf("content must be at least 10 characters")
 	}
 	encodeContent(body, content)
+	return nil
+}
+
+// teamIDField copies team_id into body. The API reads it only in a request
+// that also sets visibility TEAM, and silently ignores it otherwise.
+func teamIDField(req mcp.CallToolRequest, body map[string]any) error {
+	if v, ok := optString(req, "team_id"); ok {
+		if err := client.ValidateID(v); err != nil {
+			return err
+		}
+		if body["visibility"] != "TEAM" {
+			return fmt.Errorf("team_id only applies with visibility TEAM; pass visibility TEAM as well")
+		}
+		body["team_id"] = v
+	}
 	return nil
 }

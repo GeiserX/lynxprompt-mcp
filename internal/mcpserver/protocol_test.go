@@ -276,3 +276,43 @@ func TestProtocol_read_tools_return_structured_content_that_matches_their_schema
 		t.Errorf("unknown arguments should be rejected, got %v", r)
 	}
 }
+
+// The write tools' input schemas must accept every agent type and team_id,
+// or the server refuses the call before LynxPrompt ever sees it.
+func TestProtocol_write_tools_accept_new_agent_types_and_team_id(t *testing.T) {
+	var bodies []map[string]any
+	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var b map[string]any
+		_ = json.NewDecoder(r.Body).Decode(&b)
+		bodies = append(bodies, b)
+		w.Write([]byte(`{"id":"bp_new","name":"x"}`))
+	}))
+	t.Cleanup(api.Close)
+
+	p := startStdio(t, Options{}, api.URL)
+	calls := []struct {
+		name string
+		args map[string]any
+	}{
+		{"create_blueprint", map[string]any{"name": "Reviewer", "content": "---\nname: reviewer\n---\nReview.", "type": "AGENT_DEFINITION", "visibility": "TEAM", "team_id": "team_b"}},
+		{"create_blueprint", map[string]any{"name": "Skill", "content": "---\nname: skill\n---\nDo it.", "type": "AGENT_SKILL"}},
+		{"update_blueprint", map[string]any{"id": "bp_a", "type": "MCP_CONFIG", "visibility": "TEAM", "team_id": "team_b"}},
+	}
+	for _, c := range calls {
+		r := result(t, modernCall(p, "tools/call", map[string]any{"name": c.name, "arguments": c.args}))
+		if r["isError"] == true {
+			t.Fatalf("%s %v was refused: %v", c.name, c.args, r["content"])
+		}
+	}
+	if len(bodies) != len(calls) {
+		t.Fatalf("API got %d requests, want %d", len(bodies), len(calls))
+	}
+	for i, c := range calls {
+		if bodies[i]["type"] != c.args["type"] {
+			t.Errorf("%s: type = %v, want %v", c.name, bodies[i]["type"], c.args["type"])
+		}
+		if bodies[i]["team_id"] != c.args["team_id"] {
+			t.Errorf("%s: team_id = %v, want %v", c.name, bodies[i]["team_id"], c.args["team_id"])
+		}
+	}
+}

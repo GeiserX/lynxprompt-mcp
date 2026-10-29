@@ -16,8 +16,8 @@ const (
 	Name = "LynxPrompt MCP Bridge"
 
 	instructions = `LynxPrompt stores AI agent instruction files ("blueprints": AGENTS.md, CLAUDE.md, Cursor rules, slash commands).
-- Your own blueprints have bp_ ids: find them with list_blueprints, read one (with content and content_checksum) with get_blueprint.
-- search_blueprints searches the public marketplace of other people's blueprints.
+- Blueprints have bp_ ids. list_blueprints lists your own; search_blueprints searches the public marketplace of other people's.
+- get_blueprint reads any blueprint you can see (yours, your team's, public ones) with its content and content_checksum. Only the owner can update or delete one.
 - Before update_blueprint, call get_blueprint and pass its content_checksum as expected_checksum; a 409 means someone else changed it, so re-read and merge.
 - visibility PUBLIC publishes a blueprint to everyone. delete_blueprint is permanent.
 - A hierarchy (ha_ id) groups the blueprints of one repository; delete_hierarchy only unlinks its blueprints.`

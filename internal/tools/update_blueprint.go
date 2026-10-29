@@ -28,6 +28,7 @@ func NewUpdateBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		typeProperty,
 		descriptionProperty,
 		visibilityProperty,
+		teamIDProperty,
 		categoryProperty,
 		tagsProperty,
 		blueprintOutput,
@@ -53,6 +54,9 @@ func NewUpdateBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 		if v, ok := optString(req, "expected_checksum"); ok {
 			body["expected_checksum"] = v
+		}
+		if err := teamIDField(req, body); err != nil {
+			return errorResult(err), nil
 		}
 
 		resp, err := lp.UpdateBlueprint(ctx, id, body)

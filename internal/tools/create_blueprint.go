@@ -23,6 +23,7 @@ func NewCreateBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		typeProperty,
 		descriptionProperty,
 		visibilityProperty,
+		teamIDProperty,
 		categoryProperty,
 		tagsProperty,
 		mcp.WithString("hierarchy_id",
@@ -69,6 +70,9 @@ func NewCreateBlueprint(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 		}
 		if v, ok := optString(req, "repository_path"); ok {
 			body["repository_path"] = v
+		}
+		if err := teamIDField(req, body); err != nil {
+			return errorResult(err), nil
 		}
 
 		resp, err := lp.CreateBlueprint(ctx, body)

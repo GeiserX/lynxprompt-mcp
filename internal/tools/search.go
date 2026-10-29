@@ -19,8 +19,8 @@ func NewSearchBlueprints(lp *client.Client) (mcp.Tool, server.ToolHandlerFunc) {
 	tool := mcp.NewTool("search_blueprints",
 		mcp.WithDescription("Search the public LynxPrompt marketplace of AI agent instruction files "+
 			"(AGENTS.md, CLAUDE.md, Cursor rules, slash commands and so on). Use it to find "+
-			"blueprints other people published. To read or change your own blueprints use "+
-			"list_blueprints and get_blueprint instead. Needs no token. Returns one page of "+
+			"blueprints other people published; get_blueprint reads a result's content. To find "+
+			"your own blueprints use list_blueprints instead. Needs no token. Returns one page of "+
 			"results (templates[] with id, name, description, author, type, tags) plus total and hasMore."),
 		annotations("Search marketplace blueprints", true, false, true),
 		mcp.WithString("query",

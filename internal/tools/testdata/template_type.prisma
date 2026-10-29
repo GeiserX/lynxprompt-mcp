@@ -1,0 +1,61 @@
+enum TemplateType {
+  LICENSE
+  FUNDING
+  CURSORRULES       // Legacy - keep for backwards compat
+  CURSOR_RULES      // New standard (still deprecated in favor of AGENTS_MD)
+  CURSOR_MDC        // Cursor MDC format (.cursor/rules/)
+  CLAUDE_MD
+  COPILOT_INSTRUCTIONS
+  WINDSURF_RULES
+  GEMINI_MD         // Antigravity (Google's AI-powered IDE)
+  AGENTS_MD         // Universal AGENTS.md - Recommended
+  CLINE_RULES
+  CODEX_MD
+  // IDEs
+  ZED_INSTRUCTIONS  // Zed (.zed/instructions.md)
+  VOID_CONFIG       // Void IDE (.void/config.json)
+  TRAE_RULES        // Trae (.trae/rules/)
+  IDX_CONFIG        // Project IDX (.idx/)
+  // Editor Extensions
+  ROO_RULES         // Roo-Cline (.roo/rules/)
+  CONTINUE_CONFIG   // Continue (.continue/config.json)
+  CODY_CONFIG       // Sourcegraph Cody (.cody/config.json)
+  TABNINE_CONFIG    // Tabnine (.tabnine.yaml)
+  AMAZONQ_RULES     // Amazon Q (.amazonq/rules/)
+  AUGMENT_RULES     // Augment (.augment/rules/)
+  KILOCODE_RULES    // Kilocode (.kilocode/rules/)
+  JUNIE_GUIDELINES  // Junie (.junie/guidelines.md)
+  KIRO_STEERING     // Kiro (.kiro/steering/)
+  // CLI Tools
+  AIDER_MD          // Aider (AIDER.md)
+  GOOSEHINTS        // Goose (.goosehints)
+  WARP_MD           // Warp AI (WARP.md)
+  OPENCODE_JSON     // OpenCode (opencode.json)
+  // Other
+  OPENHANDS_MD      // OpenHands (.openhands/microagents/repo.md)
+  // AI Agent Commands - Slash commands for AI IDEs
+  CURSOR_COMMAND    // Cursor commands (.cursor/commands/*.md)
+  CLAUDE_COMMAND    // Claude Code commands (.claude/commands/*.md)
+  WINDSURF_WORKFLOW // Windsurf workflows (.windsurf/workflows/*.md)
+  COPILOT_PROMPT    // GitHub Copilot prompts (.copilot/prompts/*.md)
+  CONTINUE_PROMPT   // Continue.dev prompts (.continue/prompts/*.md)
+  OPENCODE_COMMAND  // OpenCode commands (.opencode/commands/*.md)
+  // Agent Skills and MCP servers, one definition for every tool
+  AGENT_SKILL       // Agent Skill (<tool>/skills/<name>/SKILL.md)
+  MCP_CONFIG        // MCP servers (.mcp.json, .cursor/mcp.json, .vscode/mcp.json)
+  AGENT_DEFINITION  // Subagent (.claude/agents/<name>.md, .agents/agents/<name>.md)
+  GITIGNORE
+  README
+  CONTRIBUTING
+  CODE_OF_CONDUCT
+  SECURITY
+  DOCKERFILE
+  DOCKER_COMPOSE
+  GITHUB_ACTIONS
+  GITLAB_CI
+  EDITORCONFIG
+  PRETTIER
+  ESLINT
+  PRE_COMMIT
+  CUSTOM
+}
