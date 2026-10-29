@@ -15,7 +15,7 @@
 | `create_hierarchy` | no | no | `name`, `repository_root`, `description`. Returns the existing hierarchy for the same `repository_root`. |
 | `delete_hierarchy` | no | yes | Deletes the hierarchy; its blueprints are kept, unlinked. |
 
-Ids are `bp_...` for blueprints and `ha_...` for hierarchies. Results come back as `structuredContent` that matches each tool's output schema, plus the same JSON as text. Blueprint content is sent to the API base64-encoded (`content_base64`), so Cloudflare's firewall in front of lynxprompt.com does not reject shell or config snippets.
+Ids are `bp_...` for blueprints and `ha_...` for hierarchies. Results come back as `structuredContent` that matches each tool's output schema, plus the same JSON as text. Blueprint content is sent to the API base64-encoded (`content_base64`), so Cloudflare's firewall in front of the hosted instance does not reject shell or config snippets.
 
 With `LYNXPROMPT_READ_ONLY=true` only the five read tools are registered.
 

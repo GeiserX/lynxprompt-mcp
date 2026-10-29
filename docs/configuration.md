@@ -3,7 +3,7 @@
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `LYNXPROMPT_TOKEN` | _(empty)_ | API token (`lp_...`) from Settings, API tokens. Every tool except `search_blueprints` needs it. Secret. |
-| `LYNXPROMPT_URL` | `https://lynxprompt.com` | LynxPrompt instance URL. Must be `https://` unless the host is loopback. |
+| `LYNXPROMPT_URL` | `https://lynxprompt.geiser.cloud` | LynxPrompt instance URL. Must be `https://` unless the host is loopback. A value of exactly `https://lynxprompt.com`, the old hosted address, is read as `https://lynxprompt.geiser.cloud`. |
 | `LYNXPROMPT_ALLOW_HTTP` | `false` | Allow an `http://` `LYNXPROMPT_URL` on a remote host. The token then travels unencrypted. |
 | `LYNXPROMPT_READ_ONLY` | `false` | `true` registers only the read tools: no create, update or delete. |
 | `TRANSPORT` | _(empty = HTTP)_ | `stdio` for stdio. The npm package always uses stdio; the Docker image defaults to stdio. |

@@ -26,9 +26,15 @@ type LynxPromptConfig struct {
 	AllowHTTP bool
 }
 
+// DefaultBaseURL is the hosted instance. It moved from lynxprompt.com, which
+// goes away in December 2026, and many client configs still pin the old host.
+const DefaultBaseURL = "https://lynxprompt.geiser.cloud"
+
+const legacyBaseURL = "https://lynxprompt.com"
+
 func LoadConfig() LynxPromptConfig {
 	return LynxPromptConfig{
-		BaseURL:   getEnv("LYNXPROMPT_URL", "https://lynxprompt.com"),
+		BaseURL:   migrateLegacyURL(getEnv("LYNXPROMPT_URL", DefaultBaseURL)),
 		Token:     getEnv("LYNXPROMPT_TOKEN", ""),
 		ReadOnly:  envBool("LYNXPROMPT_READ_ONLY"),
 		AllowHTTP: envBool("LYNXPROMPT_ALLOW_HTTP"),
@@ -41,7 +47,7 @@ func LoadConfig() LynxPromptConfig {
 func (c LynxPromptConfig) Validate() error {
 	u, err := url.Parse(c.BaseURL)
 	if err != nil || u.Host == "" {
-		return fmt.Errorf("LYNXPROMPT_URL must be an absolute URL such as https://lynxprompt.com")
+		return fmt.Errorf("LYNXPROMPT_URL must be an absolute URL such as " + DefaultBaseURL)
 	}
 	switch u.Scheme {
 	case "https":
@@ -54,6 +60,15 @@ func (c LynxPromptConfig) Validate() error {
 	default:
 		return fmt.Errorf("LYNXPROMPT_URL must start with https:// (got scheme %q)", u.Scheme)
 	}
+}
+
+// migrateLegacyURL maps an exact https://lynxprompt.com (with or without a
+// trailing slash) to the new hosted instance and leaves any other URL alone.
+func migrateLegacyURL(u string) string {
+	if strings.TrimRight(strings.TrimSpace(u), "/") == legacyBaseURL {
+		return DefaultBaseURL
+	}
+	return u
 }
 
 func isLoopbackHost(host string) bool {

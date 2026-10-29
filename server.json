@@ -6,14 +6,14 @@
   "websiteUrl": "https://github.com/GeiserX/lynxprompt-mcp",
   "icons": [
     {
-      "src": "https://lynxprompt.com/favicon.svg",
+      "src": "https://lynxprompt.geiser.cloud/favicon.svg",
       "mimeType": "image/svg+xml",
       "sizes": [
         "any"
       ]
     },
     {
-      "src": "https://lynxprompt.com/icon-192.png",
+      "src": "https://lynxprompt.geiser.cloud/icon-192.png",
       "mimeType": "image/png",
       "sizes": [
         "192x192"
@@ -48,7 +48,7 @@
           "isRequired": false,
           "format": "string",
           "isSecret": false,
-          "default": "https://lynxprompt.com"
+          "default": "https://lynxprompt.geiser.cloud"
         },
         {
           "name": "LYNXPROMPT_READ_ONLY",
@@ -80,7 +80,7 @@
           "isRequired": false,
           "format": "string",
           "isSecret": false,
-          "default": "https://lynxprompt.com"
+          "default": "https://lynxprompt.geiser.cloud"
         },
         {
           "name": "LYNXPROMPT_READ_ONLY",

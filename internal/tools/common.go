@@ -162,7 +162,7 @@ func oneOf(key, val string, allowed []string) error {
 }
 
 // encodeContent sends blueprint text as content_base64. Cloudflare's WAF in
-// front of lynxprompt.com rejects raw request bodies that contain shell or
+// front of the hosted instance rejects raw request bodies that contain shell or
 // config snippets, which is what blueprints are made of; the API decodes
 // content_base64 back to text, and the official CLI does the same.
 func encodeContent(body map[string]any, content string) {

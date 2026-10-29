@@ -28,7 +28,7 @@ services:
       - TRANSPORT=http
       - LISTEN_ADDR=0.0.0.0:8080
       - MCP_AUTH_TOKEN=${MCP_AUTH_TOKEN}   # 32+ characters, e.g. openssl rand -hex 32
-      - LYNXPROMPT_URL=https://lynxprompt.com
+      - LYNXPROMPT_URL=https://lynxprompt.geiser.cloud
       - LYNXPROMPT_TOKEN=${LYNXPROMPT_TOKEN}
 ```
 

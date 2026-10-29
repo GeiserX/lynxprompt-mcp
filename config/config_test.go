@@ -8,8 +8,8 @@ func TestLoadConfig_Defaults(t *testing.T) {
 	t.Setenv("LYNXPROMPT_URL", "")
 	t.Setenv("LYNXPROMPT_TOKEN", "")
 	cfg := LoadConfig()
-	if cfg.BaseURL != "https://lynxprompt.com" {
-		t.Errorf("BaseURL default: got %q, want %q", cfg.BaseURL, "https://lynxprompt.com")
+	if cfg.BaseURL != "https://lynxprompt.geiser.cloud" {
+		t.Errorf("BaseURL default: got %q, want %q", cfg.BaseURL, "https://lynxprompt.geiser.cloud")
 	}
 	if cfg.Token != "" {
 		t.Errorf("Token default: got %q, want empty", cfg.Token)
@@ -25,6 +25,22 @@ func TestLoadConfig_EnvOverride(t *testing.T) {
 	}
 	if cfg.Token != "my-secret-token" {
 		t.Errorf("Token: got %q, want %q", cfg.Token, "my-secret-token")
+	}
+}
+
+func TestLoadConfig_LegacyURL(t *testing.T) {
+	for in, want := range map[string]string{
+		"https://lynxprompt.com":            "https://lynxprompt.geiser.cloud",
+		"https://lynxprompt.com/":           "https://lynxprompt.geiser.cloud",
+		"https://lynxprompt.geiser.cloud":   "https://lynxprompt.geiser.cloud",
+		"https://lp.example.org":            "https://lp.example.org",
+		"https://lynxprompt.com/custompath": "https://lynxprompt.com/custompath",
+		"http://lynxprompt.com":             "http://lynxprompt.com",
+	} {
+		t.Setenv("LYNXPROMPT_URL", in)
+		if got := LoadConfig().BaseURL; got != want {
+			t.Errorf("LYNXPROMPT_URL=%q: BaseURL = %q, want %q", in, got, want)
+		}
 	}
 }
 
@@ -78,7 +94,7 @@ func TestValidate(t *testing.T) {
 		allowHTTP bool
 		ok        bool
 	}{
-		{"https://lynxprompt.com", false, true},
+		{"https://lynxprompt.geiser.cloud", false, true},
 		{"https://lp.example.org/", false, true},
 		{"http://localhost:3000", false, true},
 		{"http://127.0.0.1:3000", false, true},
