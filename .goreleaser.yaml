@@ -1,3 +1,5 @@
+version: 2
+
 project_name: lynxprompt-mcp
 release:
   github:
@@ -43,25 +45,27 @@ notarize:
 
 archives:
   - id: dist
-    builds: [bin]
+    ids: [bin]
     format_overrides:
       - goos: windows
-        format: zip
+        formats: [zip]
 
 checksum:
   name_template: 'checksums.txt'
 
-dockers:
-  # ------------- amd64 -------------
-  - image_templates:
-      - "drumsergio/lynxprompt-mcp:{{ .Tag }}-amd64"
+# The Dockerfile builds the binary from source, so the context gets the source
+# files. Published: <tag> and latest as linux/amd64 + linux/arm64 indexes, plus
+# the single-platform <tag>-<arch> and latest-<arch> tags. SBOM and provenance
+# are off, so each index holds the two images and nothing else.
+dockers_v2:
+  - id: multiarch
+    images: [drumsergio/lynxprompt-mcp]
+    tags:
+      - "{{ .Tag }}"
       # Empty, so not pushed, for a pre-release: latest stays on the last stable tag.
-      - "{{ if not .Prerelease }}drumsergio/lynxprompt-mcp:latest-amd64{{ end }}"
-    dockerfile: Dockerfile
-    goos:   linux
-    goarch: amd64
-    use:    buildx
-    extra_files:
+      - "{{ if not .Prerelease }}latest{{ end }}"
+    platforms: [linux/amd64, linux/arm64]
+    extra_files: &extra_files
       - go.mod
       - go.sum
       - cmd/
@@ -70,50 +74,36 @@ dockers:
       - config/
       - version/
       - .goreleaser.yaml
-    build_flag_templates:
-      - "--platform=linux/amd64"
-      - "--build-arg=VERSION={{ .Version }}"
-      - "--build-arg=COMMIT={{ .ShortCommit }}"
-      - "--build-arg=DATE={{ .Date }}"
-  # ------------- arm64 -------------
-  - image_templates:
-      - "drumsergio/lynxprompt-mcp:{{ .Tag }}-arm64"
-      # Empty, so not pushed, for a pre-release: latest stays on the last stable tag.
-      - "{{ if not .Prerelease }}drumsergio/lynxprompt-mcp:latest-arm64{{ end }}"
-    dockerfile: Dockerfile
-    goos:   linux
-    goarch: arm64
-    use:    buildx
-    extra_files:
-      - go.mod
-      - go.sum
-      - cmd/
-      - internal/
-      - client/
-      - config/
-      - version/
-      - .goreleaser.yaml
-    build_flag_templates:
-      - "--platform=linux/arm64"
-      - "--build-arg=VERSION={{ .Version }}"
-      - "--build-arg=COMMIT={{ .ShortCommit }}"
-      - "--build-arg=DATE={{ .Date }}"
-
-docker_manifests:
-  # stitch the per-arch images into a combined tag = multi-arch
-  - name_template: 'drumsergio/lynxprompt-mcp:{{ .Tag }}'
-    image_templates:
-      - 'drumsergio/lynxprompt-mcp:{{ .Tag }}-amd64'
-      - 'drumsergio/lynxprompt-mcp:{{ .Tag }}-arm64'
-  - name_template: 'drumsergio/lynxprompt-mcp:latest'
-    # auto: not pushed for a pre-release tag such as v0.3.0-rc1.
-    skip_push: auto
-    image_templates:
-      - 'drumsergio/lynxprompt-mcp:latest-amd64'
-      - 'drumsergio/lynxprompt-mcp:latest-arm64'
+    build_args: &build_args
+      VERSION: "{{ .Version }}"
+      COMMIT: "{{ .ShortCommit }}"
+      DATE: "{{ .Date }}"
+    sbom: "false"
+    flags: &flags
+      - "--provenance=false"
+  - id: amd64
+    images: [drumsergio/lynxprompt-mcp]
+    tags:
+      - "{{ .Tag }}-amd64"
+      - "{{ if not .Prerelease }}latest-amd64{{ end }}"
+    platforms: [linux/amd64]
+    extra_files: *extra_files
+    build_args: *build_args
+    sbom: "false"
+    flags: *flags
+  - id: arm64
+    images: [drumsergio/lynxprompt-mcp]
+    tags:
+      - "{{ .Tag }}-arm64"
+      - "{{ if not .Prerelease }}latest-arm64{{ end }}"
+    platforms: [linux/arm64]
+    extra_files: *extra_files
+    build_args: *build_args
+    sbom: "false"
+    flags: *flags
 
 snapshot:
-  name_template: "snapshot-{{ .ShortCommit }}"
+  version_template: "snapshot-{{ .ShortCommit }}"
 
 changelog:
   # goreleaser matches these against the bare commit subject; the catch-all
